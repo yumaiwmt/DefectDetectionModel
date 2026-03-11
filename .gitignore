@@ -4,6 +4,9 @@ data_source/
 # dataset
 dataset/
 
+# processed data
+processed_data/
+
 # python
 __pycache__/
 *.pyc
