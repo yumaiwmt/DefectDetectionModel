@@ -1,0 +1,24 @@
+# data_source
+data_source/
+
+# dataset
+dataset/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# outputs
+outputs/
+models/
+checkpoints/
+logs/
+
+# system
+.DS_Store
+Thumbs.db
+
+# vscode
+.vscode/
