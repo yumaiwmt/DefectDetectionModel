@@ -8,21 +8,8 @@ base_path = Path(__file__).parent.parent
 
 input_folder = base_path / "dataset" / "train" / "good"
 
-output_base = base_path / "processed_data" / "train"
-resized_folder = output_base / "resized_images"
-hflip_folder = output_base / "hflip"
-vflip_folder = output_base / "vflip"
-affine_folder = output_base / "micro_affine"
-
-output_folders = [
-    resized_folder,
-    hflip_folder,
-    vflip_folder,
-    affine_folder
-]
-
-for folder in output_folders:
-    folder.mkdir(parents=True, exist_ok=True)
+output_folder = base_path / "dataset" / "train" / "resized_aug_images"
+output_folder.mkdir(parents=True, exist_ok=True)
 
 # set global constants
 
@@ -83,25 +70,27 @@ for image_path in image_files:
         with Image.open(image_path) as img:
             img = img.convert("RGB")
 
-            # resize
+            # resize base image
             resized_img = resize_image(img)
-            resized_output_path = resized_folder / image_path.name
-            resized_img.save(resized_output_path)
 
-            # horizontal flip (based on resized image)
+            # save resized
+            resized_path = output_folder / f"{image_path.stem}_resized{image_path.suffix}"
+            resized_img.save(resized_path)
+
+            # horizontal flip
             hflip_img = horizontal_flip(resized_img)
-            hflip_output_path = hflip_folder / f"{image_path.stem}_hflip{image_path.suffix}"
-            hflip_img.save(hflip_output_path)
+            hflip_path = output_folder / f"{image_path.stem}_hflip{image_path.suffix}"
+            hflip_img.save(hflip_path)
 
-            # vertical flip (based on resized image)
+            # vertical flip
             vflip_img = vertical_flip(resized_img)
-            vflip_output_path = vflip_folder / f"{image_path.stem}_vflip{image_path.suffix}"
-            vflip_img.save(vflip_output_path)
+            vflip_path = output_folder / f"{image_path.stem}_vflip{image_path.suffix}"
+            vflip_img.save(vflip_path)
 
-            # micro-affine (based on resized image)
+            # micro affine
             affine_img = micro_affine(resized_img)
-            affine_output_path = affine_folder / f"{image_path.stem}_affine{image_path.suffix}"
-            affine_img.save(affine_output_path)
+            affine_path = output_folder / f"{image_path.stem}_affine{image_path.suffix}"
+            affine_img.save(affine_path)
 
         print(f"Processed: {image_path.name}")
 
