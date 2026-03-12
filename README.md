@@ -32,7 +32,9 @@ DefectDetectionModel/
 └── src/                         # Source scripts
     ├── distribute_images.py     # Random image distribution script
     ├── resize_transforms.py     # Image resizing and augmentation script
-    └── split_data.py            # Data splitting script
+    ├── split_data.py            # Data splitting script
+    ├── train_patchcore.py       # PatchCore anomaly detection model training
+    └── train_efficientad.py     # EfficientAD anomaly detection model training
 ```
 
 ## Installation
@@ -48,6 +50,10 @@ pip install -r requirements.txt
 
 - **Pillow** (>=10.0.0) - Image processing library
 - **NumPy** (>=1.24.0) - Numerical computing library
+- **Anomalib** (>=1.0.0) - Anomaly detection library with pre-trained models
+- **PyTorch Lightning** (>=2.0.0) - PyTorch training framework
+- **PyTorch** (>=2.0.0) - Deep learning framework
+- **TorchVision** (>=0.15.0) - Computer vision utilities for PyTorch
 
 ## Data Setup
 
@@ -110,13 +116,70 @@ python src/resize_transforms.py
 
 Utility script for data splitting (details to be implemented).
 
+### 4. train_patchcore.py
+
+Trains a PatchCore anomaly detection model for defect detection.
+
+**Features:**
+- Uses pre-trained CNN backbone for feature extraction
+- Memory-efficient anomaly detection
+- Suitable for industrial defect detection
+
+**Usage:**
+```bash
+python src/train_patchcore.py
+```
+
+**Input:**
+- Training images from `/dataset/train/resized_aug_images/`
+- Validation good images from `/dataset/val/good/`
+- Validation defects from `/dataset/val/bad/`
+- Test images from `/dataset/test/good/` and `/dataset/test/bad/`
+
+**Output:**
+- Trained model and results saved to `/outputs/patchcore/`
+- Training metrics and test results printed to console
+
+### 5. train_efficientad.py
+
+Trains an EfficientAD anomaly detection model for defect detection.
+
+**Features:**
+- Efficient anomaly detection with lower computational cost
+- Pre-trained image encoder for feature extraction
+- Suitable for lightweight deployment
+
+**Usage:**
+```bash
+python src/train_efficientad.py
+```
+
+**Input:**
+- Training images from `/dataset/train/resized_aug_images/`
+- Validation good images from `/dataset/val/good/`
+- Validation defects from `/dataset/val/bad/`
+- Test images from `/dataset/test/good/` and `/dataset/test/bad/`
+
+**Output:**
+- Trained model and results saved to `/outputs/efficientad/`
+- Training metrics and test results printed to console
+
 ## Workflow
 
 1. **Prepare Source Data**: Place raw images in `data_source/good/` and `data_source/bad/`
 2. **Distribute Data**: Run `distribute_images.py` to split data into train/val/test sets
 3. **Process Images**: Run `resize_transforms.py` to resize and augment training images
-4. **Model Training**: Use the processed data to train your defect detection model
-5. **Evaluation**: Evaluate the model on validation and test sets
+4. **Model Training**: Choose and run one of the anomaly detection models:
+   - `train_patchcore.py` - For memory-efficient anomaly detection
+   - `train_efficientad.py` - For lightweight deployment
+5. **Evaluation**: Model automatically evaluates on validation and test sets during training
+
+## Model Comparison
+
+| Model | Training Time | Memory Usage | Best For |
+|-------|---------------|--------------|----------|
+| **PatchCore** | Moderate | Moderate | Accurate anomaly detection |
+| **EfficientAD** | Fast | Low | Lightweight deployment, edge devices |
 
 ## Notes
 
@@ -124,3 +187,5 @@ Utility script for data splitting (details to be implemented).
 - Images are copied (not moved), preserving originals in `data_source/`
 - Transformations are applied to training data only for augmentation purposes
 - Supported image formats: PNG, JPG, JPEG, BMP, TIF, TIFF
+- Training scripts expect processed images in `/dataset/train/resized_aug_images/`
+- Model checkpoints and evaluation results are saved in `/outputs/` directory
