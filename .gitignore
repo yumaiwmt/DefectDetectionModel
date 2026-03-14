@@ -7,6 +7,12 @@ dataset/
 # processed data
 processed_data/
 
+# outputs
+outputs/
+
+# datasets
+datasets/
+
 # python
 __pycache__/
 *.pyc
