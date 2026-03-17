@@ -4,26 +4,31 @@ data_source/
 # dataset
 dataset/
 
+# datasets
+datasets/
+
 # processed data
 processed_data/
 
 # outputs
 outputs/
+outputs_patchcore/
+models/
+checkpoints/
+logs/
 
-# datasets
-datasets/
+# model files
+*.ckpt
+*.pth
+*.pt
+*.onnx
 
 # python
 __pycache__/
 *.pyc
 .venv/
 venv/
-
-# outputs
-outputs/
-models/
-checkpoints/
-logs/
+env/
 
 # system
 .DS_Store

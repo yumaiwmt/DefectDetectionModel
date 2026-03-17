@@ -1,4 +1,5 @@
 from pathlib import Path
+import torch
 
 from anomalib.data import Folder
 from anomalib.engine import Engine
@@ -6,7 +7,8 @@ from anomalib.models import EfficientAd
 
 
 def main() -> None:
-    # Paths
+    torch.set_float32_matmul_precision("high")  # optional speedup on 3090
+
     base_path = Path(__file__).resolve().parent.parent
     dataset_root = base_path / "dataset"
     results_root = base_path / "outputs"
@@ -22,7 +24,12 @@ def main() -> None:
         if not folder.exists():
             raise FileNotFoundError(f"Required folder not found: {folder}")
 
-    # Datamodule
+    # optional sanity check
+    exts = {".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".webp"}
+    for folder in required_dirs:
+        count = sum(1 for p in folder.iterdir() if p.is_file() and p.suffix.lower() in exts)
+        print(f"{folder}: {count} images")
+
     datamodule = Folder(
         name="defect_dataset",
         root=dataset_root,
@@ -34,10 +41,8 @@ def main() -> None:
         num_workers=0,
     )
 
-    # Model
     model = EfficientAd()
 
-    # Engine
     engine = Engine(
         default_root_dir=str(results_root),
         max_epochs=30,
