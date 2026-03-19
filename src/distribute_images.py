@@ -10,6 +10,7 @@ data_source_bad = base_path / "data_source" / "bad"
 
 # Destination paths
 train_good = base_path / "dataset" / "train" / "good"
+train_bad = base_path / "dataset" / "train" / "bad"
 val_good = base_path / "dataset" / "val" / "good"
 val_bad = base_path / "dataset" / "val" / "bad"
 test_good = base_path / "dataset" / "test" / "good"
@@ -29,14 +30,15 @@ random.shuffle(bad_images)
 
 # Distribution counts
 good_distribution = {
-    "train": (train_good, 700),
-    "val": (val_good, 150),
-    "test": (test_good, 150)
+    "train": (train_good, 600),
+    "val": (val_good, 200),
+    "test": (test_good, 200)
 }
 
 bad_distribution = {
-    "val": (val_bad, 100),
-    "test": (test_bad, 250)
+    "train": (train_bad, 210),
+    "val": (val_bad, 70),
+    "test": (test_bad, 70)
 }
 
 # Distribute good images
