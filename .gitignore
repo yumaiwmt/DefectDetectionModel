@@ -23,6 +23,9 @@ logs/
 *.pt
 *.onnx
 
+# prediction outputs
+prediction_outputs/
+
 # python
 __pycache__/
 *.pyc

@@ -4,50 +4,28 @@ from anomalib.engine import Engine
 from anomalib.models import EfficientAd
 
 
-def run_inference(
-    image_path_or_dir: str | Path,
-    ckpt_path: str | Path,
-    results_root: str | Path | None = None,
-    image_size: tuple[int, int] = (256, 256),
-):
+def main():
+    base_path = Path(__file__).resolve().parent.parent
+
+    ckpt_path = base_path / "outputs" / "EfficientAd" / "defect_dataset" / "v1" / "weights" / "lightning" / "model.ckpt"
+    images_to_test = base_path / "dataset" / "test"
+    results_root = base_path / "prediction_outputs"
+
     model = EfficientAd()
 
     engine = Engine(
-        default_root_dir=str(results_root) if results_root is not None else None,
+        default_root_dir=str(results_root),
         accelerator="auto",
         devices=1,
     )
 
-    dataset = PredictDataset(
-        path=str(image_path_or_dir),
-        image_size=image_size,
-    )
+    predict_dataset = PredictDataset(path=images_to_test)
 
-    predictions = engine.predict(
+    engine.predict(
         model=model,
-        dataset=dataset,
+        dataset=predict_dataset,
         ckpt_path=str(ckpt_path),
-        return_predictions=True,
     )
-
-    return predictions
-
-
-def main():
-    base_path = Path(__file__).resolve().parent.parent
-
-    ckpt_path = base_path / "outputs" / "v1" / "weights" / "lightning" / "model.ckpt"
-    images_to_test = base_path / "new_images"
-    results_root = base_path / "prediction_outputs"
-
-    predictions = run_inference(
-        image_path_or_dir=images_to_test,
-        ckpt_path=ckpt_path,
-        results_root=results_root,
-        image_size=(256, 256),
-    )
-
-    return predictions
 
 
 if __name__ == "__main__":
