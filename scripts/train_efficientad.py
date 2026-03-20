@@ -36,9 +36,9 @@ def main() -> None:
         normal_dir="train/resized_aug_images",
         abnormal_dir=["val/bad", "test/bad"],
         normal_test_dir=["val/good", "test/good"],
-        train_batch_size=1,
-        eval_batch_size=8,
-        num_workers=0,
+        train_batch_size=8,
+        eval_batch_size=16,
+        num_workers=8,
     )
 
     model = EfficientAd()
@@ -46,8 +46,9 @@ def main() -> None:
     engine = Engine(
         default_root_dir=str(results_root),
         max_epochs=30,
-        accelerator="auto",
+        accelerator="gpu",
         devices=1,
+        precision="16-mixed"
     )
 
     print("Starting EfficientAD training...")
