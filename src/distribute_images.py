@@ -10,13 +10,14 @@ data_source_bad = base_path / "data_source" / "bad"
 
 # Destination paths
 train_good = base_path / "dataset" / "train" / "good"
+train_bad = base_path / "dataset" / "train" / "bad"
 val_good = base_path / "dataset" / "val" / "good"
 val_bad = base_path / "dataset" / "val" / "bad"
 test_good = base_path / "dataset" / "test" / "good"
 test_bad = base_path / "dataset" / "test" / "bad"
 
 # Create destination directories if they don't exist
-for folder in [train_good, val_good, val_bad, test_good, test_bad]:
+for folder in [train_good, train_bad, val_good, val_bad, test_good, test_bad]:
     folder.mkdir(parents=True, exist_ok=True)
 
 # Get all good images and shuffle
@@ -29,14 +30,15 @@ random.shuffle(bad_images)
 
 # Distribution counts
 good_distribution = {
-    "train": (train_good, 700),
-    "val": (val_good, 150),
-    "test": (test_good, 150)
+    "train": (train_good, 600),
+    "val": (val_good, 200),
+    "test": (test_good, 200)
 }
 
 bad_distribution = {
-    "val": (val_bad, 100),
-    "test": (test_bad, 250)
+    "train": (train_bad, 210),
+    "val": (val_bad, 70),
+    "test": (test_bad, 70)
 }
 
 # Distribute good images
