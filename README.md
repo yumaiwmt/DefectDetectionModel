@@ -261,3 +261,8 @@ python src/train_efficientad.py
 - Supported image formats: PNG, JPG, JPEG, BMP, TIF, TIFF
 - Training scripts expect processed images in `/dataset/train/resized_aug_images/`
 - Model checkpoints and evaluation results are saved in `/outputs/` directory
+
+- URL to weight files: https://drive.google.com/drive/folders/1oDkp_GDH6tgAIwHAKAMyvkafx6fPIzyl?usp=drive_link
+- "efficientad_model.ckpt" is the weight file for the EfficientAD model, originally named model.ckpt
+- "patchcore_model.ckpt" is the weight file for the PatchCore model, originally named model.ckpt
+- "resnet18_final_checkpoint.pt" is the checkpoint file for ResNet8
