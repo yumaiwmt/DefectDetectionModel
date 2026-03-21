@@ -1,41 +1,8 @@
 # Defect Detection Model
 
-A machine learning project for detecting defects in images using image processing and data augmentation techniques.
-
-## Project Structure
-
-```
-DefectDetectionModel/
-├── README.md
-├── requirements.txt
-├── data_source/                 # Raw source images
-│   ├── good/                    # Good images (1000 images)
-│   └── bad/                     # Defective images (350 images)
-├── dataset/                     # Distributed and organized images
-│   ├── train/
-│   │   └── good/               # Training good images (700)
-│   ├── val/
-│   │   ├── good/               # Validation good images (150)
-│   │   └── bad/                # Validation bad images (100)
-│   └── test/
-│       ├── good/               # Test good images (150)
-│       └── bad/                # Test bad images (250)
-├── processed_data/              # Augmented and transformed images
-│   └── train/
-│       ├── resized_images/      # Resized images (384x384)
-│       ├── hflip/               # Horizontally flipped images
-│       ├── vflip/               # Vertically flipped images
-│       └── micro_affine/        # Affine transformed images
-├── models/                      # Trained model files
-├── notebooks/                   # Jupyter notebooks for experimentation
-├── outputs/                     # Model outputs and predictions
-└── src/                         # Source scripts
-    ├── distribute_images.py     # Random image distribution script
-    ├── resize_transforms.py     # Image resizing and augmentation script
-    ├── split_data.py            # Data splitting script
-    ├── train_patchcore.py       # PatchCore anomaly detection model training
-    └── train_efficientad.py     # EfficientAD anomaly detection model training
-```
+A machine learning project for detecting defects in images. This repository supports two approaches:
+- **Anomaly Detection** (main branch) - Using EfficientAd and PatchCore models
+- **Binary Classification** (binary-classification branch) - Using ResNet18
 
 ## Installation
 
@@ -50,54 +17,159 @@ pip install -r requirements.txt
 
 - **Pillow** (>=10.0.0) - Image processing library
 - **NumPy** (>=1.24.0) - Numerical computing library
+- **Pandas** (>=1.5.0) - Data manipulation and analysis
+- **Matplotlib** (>=3.7.0) - Visualization library
 - **Anomalib** (>=1.0.0) - Anomaly detection library with pre-trained models
 - **PyTorch Lightning** (>=2.0.0) - PyTorch training framework
 - **PyTorch** (>=2.0.0) - Deep learning framework
 - **TorchVision** (>=0.15.0) - Computer vision utilities for PyTorch
 
-## Data Setup
+## Workflow
 
-### Initial Data Structure (`data_source/`)
+### Branch: `main` (Anomaly Detection)
 
-Before running any scripts, organize your raw images in the `data_source` folder:
+This branch implements anomaly detection using unsupervised and semi-supervised learning. You can choose between two models:
+- **EfficientAd** - Efficient and lightweight anomaly detection
+- **PatchCore** - Feature-based anomaly detection with coreset sampling
+
+#### Step 1: Prepare Data Source
+Create a `data_source/` folder with good and bad images:
 
 ```
 data_source/
-├── good/          # Good/non-defective images (1000 images)
-└── bad/           # Defective images (350 images)
+├── good/    # Good/non-defective images
+└── bad/     # Defective images
 ```
 
-### Image Distribution (`dataset/`)
-
-The `distribute_images.py` script randomly distributes images from `data_source/` into training, validation, and test sets according to the following distribution:
-
-- **Training (700 good images)**: `dataset/train/good/`
-- **Validation (150 good + 100 bad)**: `dataset/val/good/` and `dataset/val/bad/`
-- **Testing (150 good + 250 bad)**: `dataset/test/good/` and `dataset/test/bad/`
-
-## Scripts
-
-### 1. distribute_images.py
-
-Randomly distributes images from `data_source/` to the `dataset/` folder according to predefined ratios.
-
-**Usage:**
+#### Step 2: Distribute Images
 ```bash
 python src/distribute_images.py
 ```
 
-**Output:**
-- Copies images to `/dataset/train/good/`, `/dataset/val/`, and `/dataset/test/`
-- Prints distribution summary
+This distributes images from `data_source/` into training, validation, and test sets:
+- **Training**: `dataset/train/resized_aug_images/` (good images only)
+- **Validation**: `dataset/val/good/` and `dataset/val/bad/`
+- **Test**: `dataset/test/good/` and `dataset/test/bad/`
 
-### 2. resize_transforms.py
+#### Step 3: Preprocess Data
+```bash
+python src/resize_transforms.py
+```
 
-Processes training images by resizing and applying data augmentation techniques.
+Resizes and augments training images (384x384):
+- Original resize
+- Horizontal flip
+- Vertical flip
+- Micro affine transformation
 
-**Operations:**
-- **Resizing**: Resizes all images to 384x384 pixels
-- **Horizontal Flip**: Creates horizontally flipped versions
-- **Vertical Flip**: Creates vertically flipped versions
+#### Option 1: Using EfficientAd
+
+**Step 4a: Train EfficientAd Model**
+```bash
+python scripts/train_efficientad.py
+```
+
+**Step 4b: Inference (EfficientAd)**
+```bash
+python scripts/inference_efficientad.py
+```
+
+**Step 4c: Evaluate (EfficientAd)**
+```bash
+python scripts/visualize_anomaly_map.py
+```
+
+---
+
+#### Option 2: Using PatchCore
+
+**Step 4a: Train PatchCore Model**
+```bash
+python scripts/train_patchcore.py
+```
+
+**Step 4b: Inference (PatchCore)**
+```bash
+python scripts/inference_patchcore.py
+```
+
+**Step 4c: Evaluate (PatchCore)**
+```bash
+python scripts/visualize_multiscale_maps.py
+```
+
+---
+
+### Branch: `binary-classification` (Binary Classification)
+
+This branch implements binary classification using ResNet18 to classify images as good or bad.
+
+#### Step 1: Prepare Data Source
+Create a `data_source/` folder with good and bad images (same as main branch):
+
+```
+data_source/
+├── good/    # Good/non-defective images
+└── bad/     # Defective images
+```
+
+#### Step 2: Distribute Images
+**⚠️ Important**: Make sure the `dataset/` folder is empty before running this script.
+
+```bash
+python src/distribute_images.py
+```
+
+Distributes images into training and validation sets with binary labels.
+
+#### Step 3: Train ResNet18 Model
+```bash
+python scripts/train_resnet18.py
+```
+
+Trains a binary classifier (good vs. bad). The model selection is based on validation F1 score. **Test set is never exposed during training.**
+
+#### Step 4: Inference
+```bash
+python scripts/inference_resnet18.py
+```
+
+#### Step 5: Evaluate
+```bash
+python scripts/evaluate_resnet18.py
+```
+
+---
+
+## Project Structure
+
+```
+DefectDetectionModel/
+├── README.md
+├── requirements.txt
+├── data_source/                 # Raw source images (create this folder)
+│   ├── good/                    
+│   └── bad/                     
+├── dataset/                     # Distributed training/validation images
+│   ├── train/
+│   ├── val/
+│   └── test/
+├── dataset_binary/              # Binary classification dataset (binary-classification branch)
+├── models/                      # Model definitions
+├── notebooks/                   # Jupyter notebooks
+├── outputs/                     # Model checkpoints and results (anomaly detection)
+├── pre_trained/                 # Pre-trained model weights
+├── scripts/                     # Training and inference scripts
+├── src/                         # Data preprocessing scripts
+└── datasets/                    # External datasets (imagenette, etc.)
+```
+
+## Notes
+
+- Always check that you're on the correct branch before running scripts
+- For the binary-classification branch, ensure the `dataset/` folder is cleaned before distributing images
+- PyTorch GPU acceleration is supported if CUDA is available
+
 - **Micro-Affine**: Applies small affine transformations (1% shift and scale)
 
 **Usage:**
