@@ -6,6 +6,7 @@ dataset/
 
 # datasets
 datasets/
+dataset_binary/
 
 # processed data
 processed_data/

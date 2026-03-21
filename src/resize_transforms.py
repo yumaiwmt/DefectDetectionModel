@@ -1,6 +1,7 @@
 from pathlib import Path
 from PIL import Image, ImageEnhance, ImageFilter
 import numpy as np
+import pandas as pd
 import random
 
 # Paths

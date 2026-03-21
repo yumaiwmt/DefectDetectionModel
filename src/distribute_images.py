@@ -17,7 +17,7 @@ test_good = base_path / "dataset" / "test" / "good"
 test_bad = base_path / "dataset" / "test" / "bad"
 
 # Create destination directories if they don't exist
-for folder in [train_good, val_good, val_bad, test_good, test_bad]:
+for folder in [train_good, train_bad, val_good, val_bad, test_good, test_bad]:
     folder.mkdir(parents=True, exist_ok=True)
 
 # Get all good images and shuffle
