@@ -25,6 +25,10 @@ logs/
 
 # prediction outputs
 prediction_outputs/
+prediction_outputs_patchcore/
+
+#evaluation outputs
+evaluation_outputs/
 
 # python
 __pycache__/
