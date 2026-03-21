@@ -1,3 +1,4 @@
+import os
 import csv
 from pathlib import Path
 
@@ -13,15 +14,13 @@ def safe_div(numerator, denominator):
     return numerator / denominator if denominator != 0 else 0.0
 
 
-def evaluate_efficientad():
-    # Folder containing this script
+def evaluate_patchcore():
+    # Get script directory (parent path)
     BASE_DIR = Path(__file__).resolve().parent.parent
 
-    # Prediction folders
-    pred_bad_dir = BASE_DIR / "prediction_outputs" / "EfficientAd" / "latest" / "images" / "bad"
-    pred_good_dir = BASE_DIR / "prediction_outputs" / "EfficientAd" / "latest" / "images" / "good"
-
-    # Ground truth folders
+    # Build paths relative to script location
+    pred_bad_dir = BASE_DIR / "prediction_outputs_patchcore" / "Patchcore" / "latest" / "images" / "bad"
+    pred_good_dir = BASE_DIR / "prediction_outputs_patchcore" / "Patchcore" / "latest" / "images" / "good"
     gt_bad_dir = BASE_DIR / "dataset" / "test" / "bad"
     gt_good_dir = BASE_DIR / "dataset" / "test" / "good"
 
@@ -35,52 +34,13 @@ def evaluate_efficientad():
     gt_bad = list_files(gt_bad_dir)
     gt_good = list_files(gt_good_dir)
 
-    # Check for overlap inside prediction folders
-    pred_overlap = pred_bad & pred_good
-    if pred_overlap:
-        raise ValueError(f"Some files appear in both prediction folders: {sorted(list(pred_overlap))[:10]}")
-
-    # Check for overlap inside GT folders
-    gt_overlap = gt_bad & gt_good
-    if gt_overlap:
-        raise ValueError(f"Some files appear in both GT folders: {sorted(list(gt_overlap))[:10]}")
-
     pred_all = pred_bad | pred_good
     gt_all = gt_bad | gt_good
-
-    print("\n=== File Counts ===")
-    print("pred_bad:", len(pred_bad))
-    print("pred_good:", len(pred_good))
-    print("gt_bad:", len(gt_bad))
-    print("gt_good:", len(gt_good))
-    print("pred_all:", len(pred_all))
-    print("gt_all:", len(gt_all))
-
-    only_in_pred = pred_all - gt_all
-    only_in_gt = gt_all - pred_all
-
-    print("only_in_pred:", len(only_in_pred))
-    print("only_in_gt:", len(only_in_gt))
-
-    if only_in_pred:
-        print("Examples only in prediction:", sorted(list(only_in_pred))[:10])
-    if only_in_gt:
-        print("Examples only in ground truth:", sorted(list(only_in_gt))[:10])
-
-    # Stop if filenames don't match exactly
-    if pred_all != gt_all:
-        raise ValueError(
-            "Prediction and GT filenames do not match exactly.\n"
-            f"Missing in predictions: {len(only_in_gt)}\n"
-            f"Missing in ground truth: {len(only_in_pred)}"
-        )
-
     common_files = sorted(pred_all & gt_all)
 
     tp = tn = fp = fn = 0
     results = []
 
-    # Positive class = bad
     for filename in common_files:
         predicted_label = "bad" if filename in pred_bad else "good"
         actual_label = "bad" if filename in gt_bad else "good"
@@ -94,11 +54,9 @@ def evaluate_efficientad():
         elif actual_label == "good" and predicted_label == "bad":
             category = "FP"
             fp += 1
-        elif actual_label == "bad" and predicted_label == "good":
+        else:
             category = "FN"
             fn += 1
-        else:
-            raise RuntimeError(f"Unexpected case for file: {filename}")
 
         results.append([filename, actual_label, predicted_label, category])
 
@@ -113,7 +71,8 @@ def evaluate_efficientad():
     false_positive_rate = safe_div(fp, fp + tn)
     false_negative_rate = safe_div(fn, fn + tp)
 
-    output_csv = BASE_DIR / "efficientad_results.csv"
+    # Save CSV
+    output_csv = BASE_DIR / "patchcore_results.csv"
     with open(output_csv, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["filename", "ground_truth", "prediction", "category"])
@@ -139,4 +98,4 @@ def evaluate_efficientad():
 
 
 if __name__ == "__main__":
-    evaluate_efficientad()
+    evaluate_patchcore()

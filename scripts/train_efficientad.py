@@ -16,10 +16,8 @@ def main() -> None:
     train_good = dataset_root / "train" / "resized_aug_images"
     val_good = dataset_root / "val" / "good"
     val_bad = dataset_root / "val" / "bad"
-    test_good = dataset_root / "test" / "good"
-    test_bad = dataset_root / "test" / "bad"
 
-    required_dirs = [train_good, val_good, val_bad, test_good, test_bad]
+    required_dirs = [train_good, val_good, val_bad]
     for folder in required_dirs:
         if not folder.exists():
             raise FileNotFoundError(f"Required folder not found: {folder}")
@@ -34,11 +32,11 @@ def main() -> None:
         name="defect_dataset",
         root=dataset_root,
         normal_dir="train/resized_aug_images",
-        abnormal_dir=["val/bad", "test/bad"],
-        normal_test_dir=["val/good", "test/good"],
+        abnormal_dir="val/bad",
+        normal_test_dir="val/good",
         train_batch_size=1,
         eval_batch_size=8,
-        num_workers=0,
+        num_workers=0
     )
 
     model = EfficientAd()
@@ -46,8 +44,9 @@ def main() -> None:
     engine = Engine(
         default_root_dir=str(results_root),
         max_epochs=30,
-        accelerator="auto",
+        accelerator="gpu",
         devices=1,
+        precision="16-mixed"
     )
 
     print("Starting EfficientAD training...")

@@ -29,14 +29,14 @@ random.shuffle(bad_images)
 
 # Distribution counts
 good_distribution = {
-    "train": (train_good, 700),
-    "val": (val_good, 150),
-    "test": (test_good, 150)
+    "train": (train_good, 600),
+    "val": (val_good, 200),
+    "test": (test_good, 200)
 }
 
 bad_distribution = {
-    "val": (val_bad, 100),
-    "test": (test_bad, 250)
+    "val": (val_bad, 140),
+    "test": (test_bad, 210)
 }
 
 # Distribute good images

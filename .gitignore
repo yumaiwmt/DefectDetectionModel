@@ -26,6 +26,7 @@ logs/
 # prediction outputs
 prediction_outputs/
 prediction_outputs_patchcore/
+prediction_outputs_resnet18/
 
 #evaluation outputs
 evaluation_outputs/

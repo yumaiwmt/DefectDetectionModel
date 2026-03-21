@@ -7,7 +7,7 @@ from anomalib.models import EfficientAd
 def main():
     base_path = Path(__file__).resolve().parent.parent
 
-    ckpt_path = base_path / "outputs" / "EfficientAd" / "defect_dataset" / "v1" / "weights" / "lightning" / "model.ckpt"
+    ckpt_path = base_path / "outputs" / "EfficientAd" / "defect_dataset" / "v4" / "weights" / "lightning" / "model.ckpt"
     images_to_test = base_path / "dataset" / "test"
     results_root = base_path / "prediction_outputs"
 
